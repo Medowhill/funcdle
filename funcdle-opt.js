@@ -1,0 +1,1 @@
+target/scala-2.13/funcdle-opt.js

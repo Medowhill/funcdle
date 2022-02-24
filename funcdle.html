@@ -10,8 +10,8 @@
       src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"
       integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ=="
       crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script type="text/javascript" src="./target/scala-2.13/graph-wordle-fastopt.js"></script>
-    <link rel="stylesheet" href="./index.css">
+    <script type="text/javascript" src="./funcdle-opt.js"></script>
+    <link rel="stylesheet" href="./funcdle.css">
   </head>
   <body>
     <h1>Funcdle</h1>
@@ -50,7 +50,7 @@
         <button class="kb-button-backspace">Backspace</button>
       </div>
     </div>
-    <p>Your input is a math formula possibly containing a variable "x". After
+    <p class="bm">Your input is a math formula possibly containing a variable "x". After
     you enter a formula "f(x)", the graph of "y=f(x)" will be drawn. If a point
     on your graph is vertically different from a point on the answer graph by
     less than 0.5, the point will be colored black. Otherwise, the point will be
@@ -66,6 +66,6 @@
     <p>
       GitHub: <a href="https://github.com/Medowhill/funcdle">https://github.com/Medowhill/funcdle</a>
     </p>
-    <script src="./index.js"></script>
+    <script src="./funcdle.js"></script>
   </body>
 </html>
