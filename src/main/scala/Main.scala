@@ -92,7 +92,7 @@ object Main {
   def rand(): Expr = Expr.parse(rand(5).toString)
 
   def rand(size: Int): Expr = size match {
-    case 1 => if (r.nextBoolean()) Num(1 + r.nextInt(9)) else X
+    case 1 => if (r.nextBoolean()) Num(r.nextInt(10)) else X
     case 2 =>
       val e = rand(1)
       r.nextInt(3) match {
@@ -100,7 +100,16 @@ object Main {
         case 1 => Sqrt(e)
         case 2 => Ln(e)
       }
-    case 3 => randBin(rand(1), rand(1))
+    case 3 =>
+      if (r.nextInt(3) == 0) {
+        r.nextInt(4) match {
+          case 0 => Sqrt(Neg(X))
+          case 1 => Sqrt(Sqrt(X))
+          case 2 => Ln(Neg(X))
+          case 3 => Ln(Sqrt(X))
+        }
+      } else
+        randBin(rand(1), rand(1))
     case 5 =>
       if (r.nextInt(4) == 0)
         randBin(rand(2), rand(2))
