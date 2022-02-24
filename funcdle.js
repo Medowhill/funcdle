@@ -1,6 +1,6 @@
 const size = 10;
 const dx = 0.25;
-const mdx = 0.25;
+const mdx = 0.01;
 const delta = 0.5;
 const near = '#202020';
 const far = '#e0e0e0';
@@ -131,18 +131,18 @@ function draw(x, y, color) {
 }
 
 function guessGraph(f, guess) {
-  let x = -size;
+  let x = -size + 0.01;
   while (x <= size) {
     const _y = evaluate(f, x);
     const y = evaluate(guess, x);
 
-    const d = _y - y;
-    const color = (-delta <= d && d <= delta) ? near : far;
-    draw(x, y, color);
-
     if (isNaN(y)) {
-      x += mdx;
+      x += dx;
     } else {
+      const d = _y - y;
+      const color = (-delta <= d && d <= delta) ? near : far;
+      draw(x, y, color);
+
       const gpx = evaluate(derivative(guess), x);
       const inc = dx / Math.sqrt(gpx * gpx + 1);
       if (isNaN(inc) || inc < mdx)
