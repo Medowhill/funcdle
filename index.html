@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" charset="UTF-8" src="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraphcore.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/jsxgraph/distrib/jsxgraph.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"
+      integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript" src="./target/scala-2.13/graph-wordle-fastopt.js"></script>
+    <script type="text/javascript" src="./index.js"></script>
+    <style>
+table {
+  border-collapse: collapse;
+}
+td {
+  border: 1px solid #444444;
+  width: 30px;
+  text-align: center;
+  font-size: 20pt;
+}
+.pretty {
+  border: none;
+  width: 200px;
+}
+.green {
+  background-color: #6aaa64;
+}
+.yellow {
+  background-color: #c9b458;
+}
+.gray {
+  background-color: #86888a;
+}
+    </style>
+  </head>
+  <body>
+    <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+    <p>√ ㏑</p>
+    <input id="input" />
+    <button onclick="run()">ok</button>
+    <div id="div-trial"></div>
+  </body>
+</html>
