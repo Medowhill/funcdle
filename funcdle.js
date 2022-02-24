@@ -77,6 +77,9 @@ board = JXG.JSXGraph.initBoard('jxgbox', {
   boundingbox: [-size, size, size, -size],
   showCopyright: false,
   showNavigation: false,
+  zoom: { enabled: false },
+  pan: { enabled: false },
+  drag: { enabled: false },
   axis: true,
   grid: true
 });

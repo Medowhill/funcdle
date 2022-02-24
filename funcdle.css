@@ -102,6 +102,10 @@ p {
 .correct {
   --status-color:#538d4e
 }
+#jxgbox {
+  width: 500px;
+  height: 500px;
+}
 @keyframes pop {
   from {
     transform:scale(1.15)
@@ -120,10 +124,19 @@ p {
     transform:scaleY(0)
   }
 }
-@media (max-width:375px) {
+@media (max-width:450px) {
   .gb-row > div, .kb-row > button {
     height:48px;
     line-height:48px
   }
-  .gb {max-width:288px}
+  .gb {
+    max-width:288px
+  }
+  .kb, p {
+    width: 360px;
+  }
+  #jxgbox {
+    width: 360px;
+    height: 360px;
+  }
 }
