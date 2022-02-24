@@ -1,6 +1,6 @@
 const size = 10;
 const dx = 0.25;
-const mdx = 0.01;
+const mdx = 0.25;
 const delta = 0.5;
 const near = '#202020';
 const far = '#e0e0e0';
