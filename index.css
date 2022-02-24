@@ -1,0 +1,129 @@
+html {
+  display: table;
+  margin: auto;
+}
+body {
+  touch-action:manipulation;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  /* display:flex; */
+  /* flex-direction:column; */
+  /* justify-content:center; */
+  /* align-items:center; */
+  margin:0;
+  height:100%;
+  background:#121213;
+  font:bold 14px Arial,sans-serif
+}
+h1, p {
+  margin: auto;
+  color:#d7dadc;
+}
+p {
+  width: 510px;
+}
+.bm {
+  margin-bottom: 10px;
+}
+.gb, .kb {
+  margin: auto;
+  width:100%
+}
+.gb-row, .kb-row {
+  display:flex
+}
+.gb-row > div, .kb-row > button {
+  width:100%;
+  height:58px;
+  color:#d7dadc;
+  line-height:58px;
+  text-align:center;
+  text-transform:uppercase;
+  user-select:none
+}
+.gb {
+  max-width:340px
+}
+.gb-row.invalid {
+  animation:shake 150ms ease-out 2;
+}
+.gb-row > div {
+  margin:3px;
+  border:2px solid #3a3a3c;
+  background:var(--status-color, transparent);
+  font-size:32px;
+  transition:padding 0ms 500ms,border-width 0ms 500ms,background 0ms 500ms
+}
+.gb-row > div.filled {
+  border-color:#565758;
+  animation:pop 50ms ease-out 1
+}
+.gb-row > div.wrong, .gb-row > div.almost, .gb-row > div.correct {
+  padding:2px;
+  border-width:0;
+  animation:flip-in 500ms ease-in-out 2 alternate
+}
+.kb {
+  max-width:490px;
+  margin-bottom:6px
+}
+.kb-row:nth-child(2):before, .kb-row:nth-child(2):after{content:'';flex:.5}.kb-row > button {
+  -webkit-appearance:none;
+  flex:1;
+  margin:4px 3px;
+  padding:0;
+  border-radius:4px;
+  border:none;
+  background:var(--status-color,#818384);
+  font:inherit;
+  cursor:pointer;
+  transition:background 0ms 1000ms
+}
+.kb-row > .kb-button-enter {
+  flex:1.5;
+  font-size:12px
+}
+.kb-row > .kb-button-backspace {
+  flex:1.5;
+  font-size:0
+}
+.kb-row > .kb-button-backspace:before {
+  content:'\232B';
+  font-size:22px;
+  vertical-align:middle
+}
+.wrong {
+  --status-color:#3a3a3c
+}
+.almost {
+  --status-color:#b59f3b
+}
+.correct {
+  --status-color:#538d4e
+}
+@keyframes pop {
+  from {
+    transform:scale(1.15)
+  }
+}
+@keyframes shake {
+  33% {
+    transform:translateX(-5px)
+  }
+  66% {
+    transform:translateX(5px)
+  }
+}
+@keyframes flip-in {
+  to {
+    transform:scaleY(0)
+  }
+}
+@media (max-width:375px) {
+  .gb-row > div, .kb-row > button {
+    height:48px;
+    line-height:48px
+  }
+  .gb {max-width:288px}
+}
