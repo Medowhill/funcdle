@@ -91,8 +91,11 @@ function validate(f) {
     return false;
 
   const ys = [];
-  for (let x = -size; x <= size; x += dx)
-    ys.push(evaluate(f, x));
+  for (let x = -size; x <= size; x += dx) {
+    const y = evaluate(f, x);
+    if (!isNaN(y))
+      ys.push(y);
+  }
 
   if (ys.filter(y => -size <= y && y <= size).length < (size / dx))
     return false;
