@@ -4,6 +4,8 @@ const mdx = 0.01;
 const delta = 0.5;
 const near = '#202020';
 const far = '#e0e0e0';
+const nearHighlight = '#03193f';
+const farHighlight = '#c3d9ff';
 
 const correctWord = validRand().toString();
 var board, points = [];
@@ -17,9 +19,9 @@ const processKey = key => {
 	} else if (guessWord.length > 0 && ['Backspace', 'Delete'].indexOf(key) !== -1) {
 		guessWord = guessWord.slice(0, -1);
 	} else if (guessWord.length == 5 && key == 'Enter') {
-    const f = parse(guessWord);
+		const f = parse(guessWord);
 		if (f !== null) {
-      guessGraph(parse(correctWord), f);
+			guessGraph(parse(correctWord), f, guessNum);
 
 			const guessStatuses = Array(guessWord.length).fill('wrong');
 			const almostTestLetters = correctWord.split('');
@@ -84,6 +86,7 @@ board = JXG.JSXGraph.initBoard('jxgbox', {
   grid: true
 });
 
+document.querySelectorAll('.gb-row').forEach((n, idx) => { n.addEventListener('mouseenter', () => board.select({graphId: idx}).highlight()); n.addEventListener('mouseleave', () => board.select({graphId: idx}).noHighlight()); });
 document.querySelectorAll('.kb-row button').forEach(n => n.addEventListener('click', e => !isGameOver && processKey(e.target.textContent)));
 document.addEventListener('keydown', e => { if (e.keyCode === 191) e.preventDefault(); });
 document.addEventListener('keyup', e => !isGameOver && processKey(e.key));
@@ -120,17 +123,20 @@ function clear() {
   points = [];
 }
 
-function draw(x, y, color) {
+function draw(x, y, color, highlightColor, gid) {
   points.push(board.create('point', [x, y], {
     name: '',
     fixed: true,
     size: 1,
     strokeColor: color,
-    fillColor: color
+    fillColor: color,
+    highlightStrokeColor: highlightColor,
+    highlightFillColor: highlightColor,
+    graphId: gid
   }));
 }
 
-function guessGraph(f, guess) {
+function guessGraph(f, guess, gid) {
   let x = -size + 0.01;
   while (x <= size) {
     const _y = evaluate(f, x);
@@ -140,8 +146,10 @@ function guessGraph(f, guess) {
       x += dx;
     } else {
       const d = _y - y;
-      const color = (-delta <= d && d <= delta) ? near : far;
-      draw(x, y, color);
+      const isNear = (-delta <= d && d <= delta);
+      const color = isNear ? near : far;
+      const highlightColor = isNear ? nearHighlight : farHighlight;
+      draw(x, y, color, highlightColor, gid);
 
       const gpx = evaluate(derivative(guess), x);
       const inc = dx / Math.sqrt(gpx * gpx + 1);
