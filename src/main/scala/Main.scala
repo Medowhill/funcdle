@@ -100,16 +100,16 @@ object Main {
       case Add(l, r) => Add(normalize(l), normalize(r))
       case Sub(l, r) => Sub(normalize(l), normalize(r))
       case Mul(l, r) => Mul(normalize(l), normalize(r))
-      case Div(l, r) => Div(normalize(l), normalize(r))
+      case Div(n, d) => Div(normalize(n), normalize(d))
       case Pow(l, r) => Pow(normalize(l), normalize(r))
     }
     def aux(e: Expr): Expr = ({
       case Mul(e, Num(n)) if !e.isInstanceOf[Num] => Mul(Num(n), e)
-      case Mul(Div(e1, e2), Div(e3, e4)) => Div((Mul(e1, e2)), (Mul(e3, e4)))
-      case Mul(Div(e1, e2), e3)          => Div((Mul(e1, e3)), e2)
-      case Mul(e1, Div(e2, e3))          => Div((Mul(e1, e2)), e3)
-      case Div(e1, Div(e2, e3))          => Div((Mul(e1, e3)), e2)
-      case Div(Div(e1, e2), e3)          => Div(e1, (Mul(e2, e3)))
+      case Mul(Div(n1, d1), Div(n2, d2)) => Div(Mul(n1, n2), Mul(d1, d2))
+      case Mul(Div(n1, d1), e2)          => Div(Mul(n1, e2), d1)
+      case Mul(e1, Div(n2, d2))          => Div(Mul(e1, n2), d2)
+      case Div(e1, Div(n2, d2))          => Div(Mul(e1, d2), n2)
+      case Div(Div(n1, d1), e2)          => Div(n1, Mul(d1, e2))
       case Add(e, Num(n)) if !e.isInstanceOf[Num] => Add(Num(n), e)
     }: PartialFunction[Expr, Expr])
       .andThen(aux _)
@@ -127,7 +127,7 @@ object Main {
       case Add(l, r) => Add(reduce(l), reduce(r))
       case Sub(l, r) => Sub(reduce(l), reduce(r))
       case Mul(l, r) => Mul(reduce(l), reduce(r))
-      case Div(l, r) => Div(reduce(l), reduce(r))
+      case Div(n, d) => Div(reduce(n), reduce(d))
       case Pow(l, r) => Pow(reduce(l), reduce(r))
     }
 
