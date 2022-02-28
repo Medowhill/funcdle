@@ -143,7 +143,7 @@ function guessGraph(f, guess, gid) {
     const _y = evaluate(f, x);
     const y = evaluate(guess, x);
 
-    if (isNaN(y)) {
+    if (isNaN(y) || !isFinite(y)) {
       x += dx;
     } else {
       const d = _y - y;
