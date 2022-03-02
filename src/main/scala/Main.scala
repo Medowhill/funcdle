@@ -75,7 +75,8 @@ object Main {
     case Add(l, r) => Add(derivative(l), derivative(r))
     case Sub(l, r) => Sub(derivative(l), derivative(r))
     case Mul(l, r) => Add(Mul(derivative(l), r), Mul(l, derivative(r)))
-    case Div(l, r) => Div(Div(Sub(Mul(r, derivative(l)), Mul(l, derivative(r))), r), r)
+    case Div(l, r) =>
+      Div(Div(Sub(Mul(r, derivative(l)), Mul(l, derivative(r))), r), r)
     case Pow(l, r) =>
       Mul(
         Pow(l, Sub(r, Num(1))),
@@ -92,11 +93,11 @@ object Main {
   // Normalize expression to help reduce
   def normalize(e: Expr): Expr = {
     val ne = e match {
-      case X         => X
-      case Num(n)    => Num(n)
-      case Neg(e)    => Neg(normalize(e))
-      case Sqrt(e)   => Sqrt(normalize(e))
-      case Ln(e)     => Ln(normalize(e))
+      case X => X
+      case Num(n) => Num(n)
+      case Neg(e) => Neg(normalize(e))
+      case Sqrt(e) => Sqrt(normalize(e))
+      case Ln(e) => Ln(normalize(e))
       case Add(l, r) => Add(normalize(l), normalize(r))
       case Sub(l, r) => Sub(normalize(l), normalize(r))
       case Mul(l, r) => Mul(normalize(l), normalize(r))
@@ -106,10 +107,10 @@ object Main {
     def aux(e: Expr): Expr = ({
       case Mul(e, Num(n)) if !e.isInstanceOf[Num] => Mul(Num(n), e)
       case Mul(Div(n1, d1), Div(n2, d2)) => Div(Mul(n1, n2), Mul(d1, d2))
-      case Mul(Div(n1, d1), e2)          => Div(Mul(n1, e2), d1)
-      case Mul(e1, Div(n2, d2))          => Div(Mul(e1, n2), d2)
-      case Div(e1, Div(n2, d2))          => Div(Mul(e1, d2), n2)
-      case Div(Div(n1, d1), e2)          => Div(n1, Mul(d1, e2))
+      case Mul(Div(n1, d1), e2) => Div(Mul(n1, e2), d1)
+      case Mul(e1, Div(n2, d2)) => Div(Mul(e1, n2), d2)
+      case Div(e1, Div(n2, d2)) => Div(Mul(e1, d2), n2)
+      case Div(Div(n1, d1), e2) => Div(n1, Mul(d1, e2))
       case Add(e, Num(n)) if !e.isInstanceOf[Num] => Add(Num(n), e)
     }: PartialFunction[Expr, Expr])
       .andThen(aux _)
@@ -119,11 +120,11 @@ object Main {
 
   def reduce(e: Expr): Expr = {
     val ne = e match {
-      case X         => X
-      case Num(n)    => Num(n)
-      case Neg(e)    => Neg(reduce(e))
-      case Sqrt(e)   => Sqrt(reduce(e))
-      case Ln(e)     => Ln(reduce(e))
+      case X => X
+      case Num(n) => Num(n)
+      case Neg(e) => Neg(reduce(e))
+      case Sqrt(e) => Sqrt(reduce(e))
+      case Ln(e) => Ln(reduce(e))
       case Add(l, r) => Add(reduce(l), reduce(r))
       case Sub(l, r) => Sub(reduce(l), reduce(r))
       case Mul(l, r) => Mul(reduce(l), reduce(r))
@@ -132,33 +133,31 @@ object Main {
     }
 
     def aux(e: Expr): Expr = ({
-      case Mul(Num(1), e)              => e
-      case Mul(Num(0), e)              => Num(0)
-      case Mul(Num(n), Num(m))         => Num(n * m)
-      case Neg(Neg(e))                 => e
-      case Neg(Num(n))                 => Num(-n)
+      case Mul(Num(1), e) => e
+      case Mul(Num(0), e) => Num(0)
+      case Mul(Num(n), Num(m)) => Num(n * m)
+      case Neg(Neg(e)) => e
+      case Neg(Num(n)) => Num(-n)
       case Mul(Num(n), Mul(Num(m), e)) => (Mul(Num(n * m), e))
-      case Mul(Mul(Num(n), e1), Mul(Num(m), e2)) => (
-        Mul(Mul(Num(n * m), e1), e2)
-      )
-      case Div(e, Num(1))                      => e
-      case Div(Num(0), e)                      => Num(0)
-      case Add(Num(n), Num(m))                 => Num(n + m)
-      case Add(Num(0), e)                      => e
+      case Mul(Mul(Num(n), e1), Mul(Num(m), e2)) => Mul(Mul(Num(n * m), e1), e2)
+      case Div(e, Num(1)) => e
+      case Div(Num(0), e) => Num(0)
+      case Add(Num(n), Num(m)) => Num(n + m)
+      case Add(Num(0), e) => e
       case Add(Mul(Num(n), X), Mul(Num(m), X)) => Mul(Num(n + m), X)
-      case Add(Mul(Num(n), X), Neg(X))         => Mul(Num(n - 1), X)
-      case Add(Neg(X), Mul(Num(n), X))         => Mul(Num(n - 1), X)
-      case Add(Num(n), Add(Num(m), e))         => (Add(Num(n + m), e))
-      case Add(Num(n), Sub(Num(m), e))         => (Sub(Num(n - m), e))
-      case Sub(Num(n), Num(m))                 => Num(n - m)
-      case Sub(e, Num(0))                      => e
-      case Pow(e, Num(1))                      => e
-      case Pow(Num(1), e)                      => Num(1)
-      case Pow(Num(n), Num(m))                 => Num(math.pow(n, m).toInt)
-      case Sub(Num(0), e)                      => Neg(e)
+      case Add(Mul(Num(n), X), Neg(X)) => Mul(Num(n - 1), X)
+      case Add(Neg(X), Mul(Num(n), X)) => Mul(Num(n - 1), X)
+      case Add(Num(n), Add(Num(m), e)) => Add(Num(n + m), e)
+      case Add(Num(n), Sub(Num(m), e)) => Sub(Num(n - m), e)
+      case Sub(Num(n), Num(m)) => Num(n - m)
+      case Sub(e, Num(0)) => e
+      case Pow(e, Num(1)) => e
+      case Pow(Num(1), e) => Num(1)
+      case Pow(Num(n), Num(m)) => Num(math.pow(n, m).toInt)
+      case Sub(Num(0), e) => Neg(e)
       case Sub(Mul(Num(n), X), Mul(Num(m), X)) => Mul(Num(n - m), X)
-      case Sub(Mul(Num(n), X), Neg(X))         => Mul(Num(n + 1), X)
-      case Sub(Neg(X), Mul(Num(n), X))         => Mul(Num(-1 - n), X)
+      case Sub(Mul(Num(n), X), Neg(X)) => Mul(Num(n + 1), X)
+      case Sub(Neg(X), Mul(Num(n), X)) => Mul(Num(-1 - n), X)
     }: PartialFunction[Expr, Expr])
       .andThen(aux _)
       .applyOrElse(e, identity[Expr] _)
@@ -218,25 +217,29 @@ object Expr extends RegexParsers {
   private lazy val n: Parser[Int] = "[0-9]+".r ^^ (_.toInt)
 
   private lazy val e0: Parser[Expr] =
-    e1 ~ rep(("+" | "-") ~ e1) ^^ { case e ~ es => es.foldLeft(e){
-      case (l, "+" ~ r) => Add(l, r)
-      case (l,  _  ~ r) => Sub(l, r)
-    }}
+    e1 ~ rep(("+" | "-") ~ e1) ^^ { case e ~ es =>
+      es.foldLeft(e) {
+        case (l, "+" ~ r) => Add(l, r)
+        case (l, _ ~ r) => Sub(l, r)
+      }
+    }
 
   private lazy val e1: Parser[Expr] =
-    e2 ~ rep(("*" | "/") ~ e2) ^^ { case e ~ es => es.foldLeft(e){
-      case (l, "*" ~ r) => Mul(l, r)
-      case (l,  _  ~ r) => Div(l, r)
-    }}
+    e2 ~ rep(("*" | "/") ~ e2) ^^ { case e ~ es =>
+      es.foldLeft(e) {
+        case (l, "*" ~ r) => Mul(l, r)
+        case (l, _ ~ r) => Div(l, r)
+      }
+    }
 
   private lazy val e2: Parser[Expr] =
     rep1sep(e3, "^") ^^ (_.reduceRight(Pow))
 
   private lazy val e3: Parser[Expr] =
     "-" ~> e3 ^^ Neg |
-    "√" ~> e3 ^^ Sqrt |
-    "㏑" ~> e3 ^^ Ln |
-    e4
+      "√" ~> e3 ^^ Sqrt |
+      "㏑" ~> e3 ^^ Ln |
+      e4
 
   private lazy val e4: Parser[Expr] = "x" ^^^ X | n ^^ Num
 }
