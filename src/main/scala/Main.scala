@@ -86,6 +86,85 @@ object Main {
       )
   }
 
+  @JSExportTopLevel("simplify")
+  def simplify(e: Expr): Expr = reduce(normalize(reduce(normalize(e))))
+
+  // Normalize expression to help reduce
+  def normalize(e: Expr): Expr = {
+    val ne = e match {
+      case X         => X
+      case Num(n)    => Num(n)
+      case Neg(e)    => Neg(normalize(e))
+      case Sqrt(e)   => Sqrt(normalize(e))
+      case Ln(e)     => Ln(normalize(e))
+      case Add(l, r) => Add(normalize(l), normalize(r))
+      case Sub(l, r) => Sub(normalize(l), normalize(r))
+      case Mul(l, r) => Mul(normalize(l), normalize(r))
+      case Div(n, d) => Div(normalize(n), normalize(d))
+      case Pow(l, r) => Pow(normalize(l), normalize(r))
+    }
+    def aux(e: Expr): Expr = ({
+      case Mul(e, Num(n)) if !e.isInstanceOf[Num] => Mul(Num(n), e)
+      case Mul(Div(n1, d1), Div(n2, d2)) => Div(Mul(n1, n2), Mul(d1, d2))
+      case Mul(Div(n1, d1), e2)          => Div(Mul(n1, e2), d1)
+      case Mul(e1, Div(n2, d2))          => Div(Mul(e1, n2), d2)
+      case Div(e1, Div(n2, d2))          => Div(Mul(e1, d2), n2)
+      case Div(Div(n1, d1), e2)          => Div(n1, Mul(d1, e2))
+      case Add(e, Num(n)) if !e.isInstanceOf[Num] => Add(Num(n), e)
+    }: PartialFunction[Expr, Expr])
+      .andThen(aux _)
+      .applyOrElse(e, identity[Expr] _)
+    aux(ne)
+  }
+
+  def reduce(e: Expr): Expr = {
+    val ne = e match {
+      case X         => X
+      case Num(n)    => Num(n)
+      case Neg(e)    => Neg(reduce(e))
+      case Sqrt(e)   => Sqrt(reduce(e))
+      case Ln(e)     => Ln(reduce(e))
+      case Add(l, r) => Add(reduce(l), reduce(r))
+      case Sub(l, r) => Sub(reduce(l), reduce(r))
+      case Mul(l, r) => Mul(reduce(l), reduce(r))
+      case Div(n, d) => Div(reduce(n), reduce(d))
+      case Pow(l, r) => Pow(reduce(l), reduce(r))
+    }
+
+    def aux(e: Expr): Expr = ({
+      case Mul(Num(1), e)              => e
+      case Mul(Num(0), e)              => Num(0)
+      case Mul(Num(n), Num(m))         => Num(n * m)
+      case Neg(Neg(e))                 => e
+      case Neg(Num(n))                 => Num(-n)
+      case Mul(Num(n), Mul(Num(m), e)) => (Mul(Num(n * m), e))
+      case Mul(Mul(Num(n), e1), Mul(Num(m), e2)) => (
+        Mul(Mul(Num(n * m), e1), e2)
+      )
+      case Div(e, Num(1))                      => e
+      case Div(Num(0), e)                      => Num(0)
+      case Add(Num(n), Num(m))                 => Num(n + m)
+      case Add(Num(0), e)                      => e
+      case Add(Mul(Num(n), X), Mul(Num(m), X)) => Mul(Num(n + m), X)
+      case Add(Mul(Num(n), X), Neg(X))         => Mul(Num(n - 1), X)
+      case Add(Neg(X), Mul(Num(n), X))         => Mul(Num(n - 1), X)
+      case Add(Num(n), Add(Num(m), e))         => (Add(Num(n + m), e))
+      case Add(Num(n), Sub(Num(m), e))         => (Sub(Num(n - m), e))
+      case Sub(Num(n), Num(m))                 => Num(n - m)
+      case Sub(e, Num(0))                      => e
+      case Pow(e, Num(1))                      => e
+      case Pow(Num(1), e)                      => Num(1)
+      case Pow(Num(n), Num(m))                 => Num(math.pow(n, m).toInt)
+      case Sub(Num(0), e)                      => Neg(e)
+      case Sub(Mul(Num(n), X), Mul(Num(m), X)) => Mul(Num(n - m), X)
+      case Sub(Mul(Num(n), X), Neg(X))         => Mul(Num(n + 1), X)
+      case Sub(Neg(X), Mul(Num(n), X))         => Mul(Num(-1 - n), X)
+    }: PartialFunction[Expr, Expr])
+      .andThen(aux _)
+      .applyOrElse(e, identity[Expr] _)
+    aux(ne)
+  }
+
   val r = new scala.util.Random
 
   @JSExportTopLevel("rand")

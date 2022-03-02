@@ -138,11 +138,12 @@ function draw(x, y, color, highlightColor, gid) {
 
 function guessGraph(f, guess, gid) {
   let x = -size + 0.01;
+  const dguess = simplify(derivative(simplify(guess)));
   while (x <= size) {
     const _y = evaluate(f, x);
     const y = evaluate(guess, x);
 
-    if (isNaN(y)) {
+    if (isNaN(y) || !isFinite(y)) {
       x += dx;
     } else {
       const d = _y - y;
@@ -151,7 +152,7 @@ function guessGraph(f, guess, gid) {
       const highlightColor = isNear ? nearHighlight : farHighlight;
       draw(x, y, color, highlightColor, gid);
 
-      const gpx = evaluate(derivative(guess), x);
+      const gpx = evaluate(dguess, x);
       const inc = dx / Math.sqrt(gpx * gpx + 1);
       if (isNaN(inc) || inc < mdx)
         x += mdx;
